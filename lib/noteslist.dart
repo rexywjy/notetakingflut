@@ -13,6 +13,25 @@ class _NoteListState extends State<NoteList> {
   final _myNotes = Hive.box('notes');
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
+  List<Map<String, dynamic>> notes = [];
+
+  Future<void> getNotes() async {
+    final data = _myNotes.keys.map((key) {
+      final note = _myNotes.get(key);
+      return {
+        'key': key,
+        'title': note['title'],
+        'content': note['content']
+      };
+    }).toList();
+    setState(() {
+      notes = data;
+    });
+    // notes = [];
+    // for (int i = 0; i < _myNotes.length; i++) {
+    //   notes.add(_myNotes.getAt(i));
+    // }
+  }
   
   Future<dynamic> storeData(Map<String, dynamic> newNote) async {
     await _myNotes.add(newNote);
@@ -20,9 +39,30 @@ class _NoteListState extends State<NoteList> {
     
   }
 
-  void _showForm (BuildContext context) async {
+  Future<dynamic> deleteData(int index) async {
+    await _myNotes.deleteAt(index);
+    print(_myNotes.length);
+    getNotes();
+  }
+
+  Future<dynamic> updateData(int key, Map<String, dynamic> newNote) async {
+    // setState(() {
+    //   titleController.text = newNote['title'];
+    //   contentController.text = newNote['content'];
+    // });
+    await _myNotes.put(key, newNote);
+    getNotes();
+    titleController.clear();
+    contentController.clear();
+  }
+
+  void _showForm (BuildContext context, int? key) async {
+    if(key != null){
+
+    }
     showModalBottomSheet(
       elevation: 10,
+      isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -50,8 +90,8 @@ class _NoteListState extends State<NoteList> {
           child: ListView(
             shrinkWrap: true,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(
+              const Padding(
+                padding: EdgeInsets.only(
                   top: 20,
                   bottom: 10
                   ),
@@ -93,57 +133,106 @@ class _NoteListState extends State<NoteList> {
                   String content = contentController.text;
 
                   if(!(title.isEmpty || content.isEmpty)) {
-                    storeData(
-                      {
-                        'title': title.toString(),
-                        'content': content.toString()
-                      }
-                    );
-                    titleController.clear();
-                    contentController.clear();
+                    if(key == null){
+                      storeData(
+                        {
+                          'title': title.toString(),
+                          'content': content.toString()
+                        }
+                      );
+                      titleController.clear();
+                      contentController.clear();
+                    }else{
+                      updateData(
+                        key, 
+                        {
+                          'title': title.toString(),
+                          'content': content.toString()
+                        });
+                    }
+                    getNotes();
                     Navigator.pop(context);
                   }
 
                 }, 
-                child: const Text('Add note')
+                child: Text(key == null ? 'Edit Notes' : 'Add Note')
               ),
-              // ElevatedButton(
-              //   onPressed: () {
-              //     _myNotes.add({
-              //       'title': titleController.text,
-              //       'content': contentController.text
-              //     });
-              //     Navigator.pop(context);
-              //   },
-              //   child: const Text('Add note'),
-              // )
             ],
           
           ),
         );
-        // AlertDialog(
-        //   title: const Text('Add a note'),
-        //   content: TextField(
-        //     decoration: const InputDecoration(
-        //       hintText: 'Enter your note'
-        //     ),
-        //     onSubmitted: (String value) {
-        //       _myNotes.add(value);
-        //       Navigator.pop(context);
-        //     },
-        //   ),
-        // );
       }
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      getNotes();
+      print(_myNotes.length);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      body: ListView.builder(
+        itemCount: notes.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            elevation: 5,
+            margin: const EdgeInsets.all(10),
+            child: ListTile(
+              title: Text(notes[index]['title']),
+              subtitle: Text(notes[index]['content']),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const IconTheme(
+                      data: IconThemeData(
+                        color: Colors.red
+                      ), 
+                      child: Icon(Icons.delete),
+                    ),
+                    onPressed: () {
+                      deleteData(index);
+                    },
+                  ),
+                  IconButton(
+                    icon: const IconTheme(
+                      data: IconThemeData(
+                        color: Colors.blue
+                      ), 
+                      child: Icon(Icons.mode_edit),
+                    ),
+                    onPressed: () {
+                      _showForm(context, notes[index]['key']);
+                      setState(() {
+                        titleController.text = notes[index]['title'];
+                        contentController.text = notes[index]['content'];
+                      });
+                      // updateData(
+                      //   notes[index]['key'], 
+                      //   {
+                      //     'title' : notes[index]['title'],
+                      //     'content' : notes[index]['content'],
+                      //   }
+                      //   );
+                    },
+                  ),
+                ],
+              )
+            ),
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          _showForm(context);
+          _showForm(context, null);
         },
         backgroundColor: Colors.blue,
           child: const IconTheme(
