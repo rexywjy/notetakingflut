@@ -32,6 +32,8 @@ class _NoteListState extends State<NoteList> {
   Future<dynamic> storeData(Map<String, dynamic> newNote) async {
     await _myNotes.add(newNote);
     print(_myNotes.length);
+    titleController.clear();
+    contentController.clear();
   }
 
   Future<dynamic> deleteData(int index) async {
@@ -148,7 +150,7 @@ class _NoteListState extends State<NoteList> {
       appBar: AppBar(
         flexibleSpace: Center(
           child: Padding(
-            padding: const EdgeInsets.only(top: 40.0), // Adjust bottom padding as needed
+            padding: const EdgeInsets.only(top: 0.0), // Adjust bottom padding as needed
             child: Text(
               'Notes',
               style: TextStyle(
