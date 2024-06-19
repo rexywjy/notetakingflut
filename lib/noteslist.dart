@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'passcode.dart'; // Import your PinCodeWidget page here
+import 'package:intl/intl.dart';
 
 class NoteList extends StatefulWidget {
   const NoteList({super.key});
@@ -21,7 +22,8 @@ class _NoteListState extends State<NoteList> {
       return {
         'key': key,
         'title': note['title'],
-        'content': note['content']
+        'content': note['content'],
+        'lastUpdated': note['lastUpdated'] ?? '',
       };
     }).toList();
     setState(() {
@@ -87,7 +89,7 @@ class _NoteListState extends State<NoteList> {
                 child: Center(
                   child: Text(
                     'Add a note',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
@@ -97,8 +99,13 @@ class _NoteListState extends State<NoteList> {
                     hintText: 'Enter your note title'),
               ),
               const SizedBox(height: 20,),
+              // TextField(
+              //   maxLines: 8, //or null 
+              //   decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
+              // ),
               TextField(
                 controller: contentController,
+                maxLines: 8, //o
                 decoration: const InputDecoration(
                     hintText: 'Enter your note content'),
               ),
@@ -117,12 +124,14 @@ class _NoteListState extends State<NoteList> {
                     if (key == null) {
                       storeData({
                         'title': title,
-                        'content': content
+                        'content': content,
+                        'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
                       });
                     } else {
                       updateData(key, {
                         'title': title,
-                        'content': content
+                        'content': content,
+                        'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
                       });
                     }
                     getNotes();
@@ -148,9 +157,9 @@ class _NoteListState extends State<NoteList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: Center(
+        flexibleSpace: const Center(
           child: Padding(
-            padding: const EdgeInsets.only(top: 0.0), // Adjust bottom padding as needed
+            padding: EdgeInsets.only(top: 0.0), // Adjust bottom padding as needed
             child: Text(
               'Notes',
               style: TextStyle(
@@ -173,41 +182,87 @@ class _NoteListState extends State<NoteList> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: ListView.builder(
-        itemCount: notes.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Card(
-            elevation: 5,
-            margin: const EdgeInsets.all(10),
-            child: ListTile(
-              title: Text(notes[index]['title']),
-              subtitle: Text(notes[index]['content']),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const IconTheme(
-                      data: IconThemeData(color: Colors.red),
-                      child: Icon(Icons.delete),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        child: GridView.builder(
+          // ListView.builder(
+          // ListView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            // crossAxisCount: 2,
+            // crossAxisSpacing: 10,
+            // mainAxisSpacing: 10,
+            crossAxisCount: 2,
+            childAspectRatio: 1.0,
+            crossAxisSpacing: 0.0,
+            mainAxisSpacing: 5,
+            mainAxisExtent: 200,
+          ),
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          itemCount: notes.length,
+          itemBuilder: (BuildContext context, int index) {
+            return GestureDetector(
+              onTap: () {
+                _showForm(context, notes[index]['key']);
+              },
+              child: Card(
+                elevation: 5,
+                // margin: const EdgeInsets.all(10),
+                child: ListTile(
+                  title: Text(
+                    notes[index]['title'],
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
                     ),
-                    onPressed: () {
-                      deleteData(index);
-                    },
                   ),
-                  IconButton(
-                    icon: const IconTheme(
-                      data: IconThemeData(color: Colors.blue),
-                      child: Icon(Icons.mode_edit),
-                    ),
-                    onPressed: () {
-                      _showForm(context, notes[index]['key']);
-                    },
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        notes[index]['content'],
+                        maxLines: 5,
+                        overflow: TextOverflow.ellipsis,  
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        'Last updated: ${notes[index]['lastUpdated']}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                  // trailing: Row(
+                  //   mainAxisSize: MainAxisSize.min,
+                  //   children: [
+                  //     IconButton(
+                  //       icon: const IconTheme(
+                  //         data: IconThemeData(color: Colors.red),
+                  //         child: Icon(Icons.delete),
+                  //       ),
+                  //       onPressed: () {
+                  //         deleteData(index);
+                  //       },
+                  //     ),
+                  //     IconButton(
+                  //       icon: const IconTheme(
+                  //         data: IconThemeData(color: Colors.blue),
+                  //         child: Icon(Icons.mode_edit),
+                  //       ),
+                  //       onPressed: () {
+                  //         _showForm(context, notes[index]['key']);
+                  //       },
+                  //     ),
+                  //   ],
+                  // ),
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
