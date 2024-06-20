@@ -23,6 +23,7 @@ class _NoteListState extends State<NoteList> {
         'key': key,
         'title': note['title'],
         'content': note['content'],
+        'createdDate': note['createdDate'] ?? '',
         'lastUpdated': note['lastUpdated'] ?? '',
       };
     }).toList();
@@ -51,100 +52,229 @@ class _NoteListState extends State<NoteList> {
     contentController.clear();
   }
 
-  void _showForm(BuildContext context, int? key) async {
+  void _showForm(BuildContext context, int? key, int index) async {
+    var createdDate;
+    var lastUpdated;
     if (key != null) {
       final note = notes.firstWhere((note) => note['key'] == key);
       titleController.text = note['title'];
       contentController.text = note['content'];
+      createdDate = note['createdDate']=='' ? '-' : note['createdDate'];
+      lastUpdated = note['lastUpdated']=='' ? '-' : note['lastUpdated'];
     }
 
-    showModalBottomSheet(
-      elevation: 10,
-      isScrollControlled: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.only(
-              top: 15,
-              left: 15,
-              right: 15,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3))
-            ],
-          ),
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.only(top: 20, bottom: 10),
-                child: Center(
-                  child: Text(
-                    'Add a note',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+    if(index>=0){
+      showModalBottomSheet(
+        elevation: 10,
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            padding: EdgeInsets.only(
+                top: 15,
+                left: 15,
+                right: 15,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3))
+              ],
+            ),
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(top: 20, bottom: 10),
+                  child: Center(
+                    child: Text(
+                      'Add a note',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                    ),
                   ),
                 ),
-              ),
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                    hintText: 'Enter your note title'),
-              ),
-              const SizedBox(height: 20,),
-              // TextField(
-              //   maxLines: 8, //or null 
-              //   decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
-              // ),
-              TextField(
-                controller: contentController,
-                maxLines: 8, //o
-                decoration: const InputDecoration(
-                    hintText: 'Enter your note content'),
-              ),
-              const SizedBox(height: 20,),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10))),
-                onPressed: () {
-                  String title = titleController.text;
-                  String content = contentController.text;
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                      hintText: 'Enter your note title'),
+                ),
+                const SizedBox(height: 20,),
+                // TextField(
+                //   maxLines: 8, //or null 
+                //   decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
+                // ),
+                TextField(
+                  controller: contentController,
+                  maxLines: 8, //o
+                  decoration: const InputDecoration(
+                      hintText: 'Enter your note content'),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Created Date : '+createdDate,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Last Update : '+lastUpdated,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20,),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  onPressed: () {
+                    String title = titleController.text;
+                    String content = contentController.text;
 
-                  if (!(title.isEmpty || content.isEmpty)) {
-                    if (key == null) {
-                      storeData({
-                        'title': title,
-                        'content': content,
-                        'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
-                      });
-                    } else {
-                      updateData(key, {
-                        'title': title,
-                        'content': content,
-                        'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
-                      });
+                    if (!(title.isEmpty || content.isEmpty)) {
+                      if (key == null) {
+                        storeData({
+                          'title': title,
+                          'content': content,
+                          'createdDate': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
+                          'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
+                        });
+                      } else {
+                        updateData(key, {
+                          'title': title,
+                          'content': content,
+                          'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
+                        });
+                      }
+                      getNotes();
+                      Navigator.pop(context);
                     }
-                    getNotes();
+                  },
+                  child: Text(key == null ? 'Add Note' : 'Edit Note'),
+                ),
+                const SizedBox(height: 10,),
+                ElevatedButton(
+                  onPressed: () {
+                    if(index>=0){
+                      deleteData(index);
+                    }
                     Navigator.pop(context);
-                  }
-                },
-                child: Text(key == null ? 'Add Note' : 'Edit Note'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                    titleController.clear();
+                    contentController.clear();
+                  }, 
+                  child: Text('Delete Note')
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+    }else{
+      
+      showModalBottomSheet(
+        elevation: 10,
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            padding: EdgeInsets.only(
+                top: 15,
+                left: 15,
+                right: 15,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3))
+              ],
+            ),
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(top: 20, bottom: 10),
+                  child: Center(
+                    child: Text(
+                      'Add a note',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                      hintText: 'Enter your note title'),
+                ),
+                const SizedBox(height: 20,),
+                // TextField(
+                //   maxLines: 8, //or null 
+                //   decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
+                // ),
+                TextField(
+                  controller: contentController,
+                  maxLines: 8, //o
+                  decoration: const InputDecoration(
+                      hintText: 'Enter your note content'),
+                ),
+                const SizedBox(height: 20,),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  onPressed: () {
+                    String title = titleController.text;
+                    String content = contentController.text;
+
+                    if (!(title.isEmpty || content.isEmpty)) {
+                      if (key == null) {
+                        storeData({
+                          'title': title,
+                          'content': content,
+                          'createdDate': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
+                          'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
+                        });
+                      } else {
+                        updateData(key, {
+                          'title': title,
+                          'content': content,
+                          'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
+                        });
+                      }
+                      getNotes();
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text(key == null ? 'Add Note' : 'Edit Note'),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+    
   }
 
   @override
@@ -187,7 +317,7 @@ class _NoteListState extends State<NoteList> {
         child: GridView.builder(
           // ListView.builder(
           // ListView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             // crossAxisCount: 2,
             // crossAxisSpacing: 10,
             // mainAxisSpacing: 10,
@@ -203,7 +333,7 @@ class _NoteListState extends State<NoteList> {
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               onTap: () {
-                _showForm(context, notes[index]['key']);
+                _showForm(context, notes[index]['key'], index);
               },
               child: Card(
                 elevation: 5,
@@ -226,7 +356,7 @@ class _NoteListState extends State<NoteList> {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        'Last updated: ${notes[index]['lastUpdated']}',
+                        'Updated: ${notes[index]['lastUpdated']}',
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
@@ -266,7 +396,7 @@ class _NoteListState extends State<NoteList> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showForm(context, null);
+          _showForm(context, null, -1);
         },
         backgroundColor: Colors.blue,
         child: const IconTheme(
