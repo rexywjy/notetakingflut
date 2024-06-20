@@ -136,10 +136,11 @@ class _NoteListState extends State<NoteList> {
                 const SizedBox(height: 20,),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10))),
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    // shape: RoundedRectangleBorder(
+                    //     borderRadius: BorderRadius.circular(10))
+                  ),
                   onPressed: () {
                     String title = titleController.text;
                     String content = contentController.text;
@@ -165,7 +166,7 @@ class _NoteListState extends State<NoteList> {
                   },
                   child: Text(key == null ? 'Add Note' : 'Edit Note'),
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(height: 2,),
                 ElevatedButton(
                   onPressed: () {
                     if(index>=0){
@@ -175,7 +176,11 @@ class _NoteListState extends State<NoteList> {
                     titleController.clear();
                     contentController.clear();
                   }, 
-                  child: Text('Delete Note')
+                  child: Text('Delete Note'),
+                  style: const ButtonStyle(
+                    foregroundColor: WidgetStatePropertyAll(Colors.white),
+                    backgroundColor: WidgetStatePropertyAll(Colors.red),
+                  ),
                 ),
               ],
             ),
@@ -239,10 +244,11 @@ class _NoteListState extends State<NoteList> {
                 const SizedBox(height: 20,),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10))),
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    // shape: RoundedRectangleBorder(
+                    //     borderRadius: BorderRadius.circular(10))
+                  ),
                   onPressed: () {
                     String title = titleController.text;
                     String content = contentController.text;
