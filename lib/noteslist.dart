@@ -59,11 +59,11 @@ class _NoteListState extends State<NoteList> {
       final note = notes.firstWhere((note) => note['key'] == key);
       titleController.text = note['title'];
       contentController.text = note['content'];
-      createdDate = note['createdDate']=='' ? '-' : note['createdDate'];
-      lastUpdated = note['lastUpdated']=='' ? '-' : note['lastUpdated'];
+      createdDate = note['createdDate'] == '' ? '-' : note['createdDate'];
+      lastUpdated = note['lastUpdated'] == '' ? '-' : note['lastUpdated'];
     }
 
-    if(index>=0){
+    if (index >= 0) {
       showModalBottomSheet(
         elevation: 10,
         isScrollControlled: true,
@@ -95,18 +95,21 @@ class _NoteListState extends State<NoteList> {
                   child: Center(
                     child: Text(
                       'Add a note',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
                 TextField(
                   controller: titleController,
-                  decoration: const InputDecoration(
-                      hintText: 'Enter your note title'),
+                  decoration:
+                      const InputDecoration(hintText: 'Enter your note title'),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 // TextField(
-                //   maxLines: 8, //or null 
+                //   maxLines: 8, //or null
                 //   decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
                 // ),
                 TextField(
@@ -119,7 +122,7 @@ class _NoteListState extends State<NoteList> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'Created Date : '+createdDate,
+                      'Created Date : ' + createdDate,
                       style: TextStyle(color: Colors.grey),
                     ),
                   ],
@@ -128,12 +131,14 @@ class _NoteListState extends State<NoteList> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'Last Update : '+lastUpdated,
+                      'Last Update : ' + lastUpdated,
                       style: TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
@@ -150,14 +155,23 @@ class _NoteListState extends State<NoteList> {
                         storeData({
                           'title': title,
                           'content': content,
-                          'createdDate': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
-                          'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
+                          'createdDate': DateFormat.yMd()
+                              .add_jm()
+                              .format(DateTime.now())
+                              .toString(),
+                          'lastUpdated': DateFormat.yMd()
+                              .add_jm()
+                              .format(DateTime.now())
+                              .toString(),
                         });
                       } else {
                         updateData(key, {
                           'title': title,
                           'content': content,
-                          'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
+                          'lastUpdated': DateFormat.yMd()
+                              .add_jm()
+                              .format(DateTime.now())
+                              .toString(),
                         });
                       }
                       getNotes();
@@ -166,16 +180,18 @@ class _NoteListState extends State<NoteList> {
                   },
                   child: Text(key == null ? 'Add Note' : 'Edit Note'),
                 ),
-                const SizedBox(height: 2,),
+                const SizedBox(
+                  height: 2,
+                ),
                 ElevatedButton(
                   onPressed: () {
-                    if(index>=0){
+                    if (index >= 0) {
                       deleteData(index);
                     }
                     Navigator.pop(context);
                     titleController.clear();
                     contentController.clear();
-                  }, 
+                  },
                   child: Text('Delete Note'),
                   style: const ButtonStyle(
                     foregroundColor: WidgetStatePropertyAll(Colors.white),
@@ -187,9 +203,7 @@ class _NoteListState extends State<NoteList> {
           );
         },
       );
-
-    }else{
-      
+    } else {
       showModalBottomSheet(
         elevation: 10,
         isScrollControlled: true,
@@ -221,18 +235,21 @@ class _NoteListState extends State<NoteList> {
                   child: Center(
                     child: Text(
                       'Add a note',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
                 TextField(
                   controller: titleController,
-                  decoration: const InputDecoration(
-                      hintText: 'Enter your note title'),
+                  decoration:
+                      const InputDecoration(hintText: 'Enter your note title'),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 // TextField(
-                //   maxLines: 8, //or null 
+                //   maxLines: 8, //or null
                 //   decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
                 // ),
                 TextField(
@@ -241,7 +258,9 @@ class _NoteListState extends State<NoteList> {
                   decoration: const InputDecoration(
                       hintText: 'Enter your note content'),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
@@ -258,14 +277,23 @@ class _NoteListState extends State<NoteList> {
                         storeData({
                           'title': title,
                           'content': content,
-                          'createdDate': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
-                          'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
+                          'createdDate': DateFormat.yMd()
+                              .add_jm()
+                              .format(DateTime.now())
+                              .toString(),
+                          'lastUpdated': DateFormat.yMd()
+                              .add_jm()
+                              .format(DateTime.now())
+                              .toString(),
                         });
                       } else {
                         updateData(key, {
                           'title': title,
                           'content': content,
-                          'lastUpdated': DateFormat.yMd().add_jm().format(DateTime.now()).toString(),
+                          'lastUpdated': DateFormat.yMd()
+                              .add_jm()
+                              .format(DateTime.now())
+                              .toString(),
                         });
                       }
                       getNotes();
@@ -280,7 +308,6 @@ class _NoteListState extends State<NoteList> {
         },
       );
     }
-    
   }
 
   @override
@@ -295,7 +322,8 @@ class _NoteListState extends State<NoteList> {
       appBar: AppBar(
         flexibleSpace: const Center(
           child: Padding(
-            padding: EdgeInsets.only(top: 0.0), // Adjust bottom padding as needed
+            padding:
+                EdgeInsets.only(top: 0.0), // Adjust bottom padding as needed
             child: Text(
               'Notes',
               style: TextStyle(
@@ -306,7 +334,8 @@ class _NoteListState extends State<NoteList> {
             ),
           ),
         ),
-        automaticallyImplyLeading: true, // This should be true to show the back button
+        automaticallyImplyLeading:
+            true, // This should be true to show the back button
         leading: IconButton(
           icon: Icon(Icons.logout), // Change this to your logout icon
           onPressed: () {
@@ -358,7 +387,7 @@ class _NoteListState extends State<NoteList> {
                       Text(
                         notes[index]['content'],
                         maxLines: 5,
-                        overflow: TextOverflow.ellipsis,  
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 5),
                       Text(
